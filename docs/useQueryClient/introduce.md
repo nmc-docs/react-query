@@ -23,4 +23,5 @@ const queryClient = useQueryClient();
 - [getQueryData()](./getQueryData)
 - [cancelQueries()](./cancelQueries)
 - [removeQueries()](./removeQueries)
+- [refetchQueries()](./refetchQueries)
 - [isFetching / isMutating](./isFetching-isMutating)
