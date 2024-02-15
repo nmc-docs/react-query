@@ -19,7 +19,7 @@ const queryClient = useQueryClient();
 ## Các thuộc tính, phương thức của useQueryClient()
 
 - [invalidateQueries()](./invalidateQueries)
-- [prefetchQuery()](./prefetchQuery)
+- [prefetchQuery() / fetchQuery()](./prefetchQuery-fetchQuery)
 - [getQueryData()](./getQueryData)
 - [cancelQueries()](./cancelQueries)
 - [removeQueries()](./removeQueries)
