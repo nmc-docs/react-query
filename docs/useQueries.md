@@ -18,10 +18,10 @@ const myQueries = useQueries({
 });
 ```
 
-| Config    | Type     | Description                                                                                                         |
-| --------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
-| `queries` | Array    | Là một mảng chứa các phần tử cấu hình giống hệt useQuery(). Xem chi tiết[tại đây](./useQuery#cấu-hình-cho-usequery) |
-| `combine` | Function | Là một hàm để gộp dữ liệu lại thành 1 object (tùy chọn)<br />`(results: UseQueriesResults) => TCombinedResult`      |
+| Config    | Type     | Description                                                                                                           |
+| --------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| `queries` | Array    | Là một mảng chứa các phần tử cấu hình giống hệt useQuery(). Xem chi tiết [tại đây](./useQuery#cấu-hình-cho-usequery). |
+| `combine` | Function | Là một hàm để gộp dữ liệu lại thành 1 object (tùy chọn)<br />`(results: UseQueriesResults) => TCombinedResult`        |
 
 - **useQueries()** trả về một mảng, mỗi phần tử của mảng là một object giống như useQuery() trả về. Xem chi tiết các thuộc tính, phương thức mà useQuery() trả về [tại đây](./useQuery#các-thuộc-tính-phương-thức-trả-về-từ-usequery)
 

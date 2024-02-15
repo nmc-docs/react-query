@@ -4,18 +4,22 @@ sidebar_position: 5
 
 # cancelQueries()
 
+:::info
+
 - Phương thức `cancelQueries()` dùng để hủy bỏ khi đang thực hiện dở query. Được dùng khi component unmounted (tức khi người dùng chuyển trang khác trong khi query đang thực hiện dở thì hủy bỏ không thực hiện query đó nữa, giúp tối ưu hiệu năng).
 - Phương thức này được dùng chủ yếu ở **cleanup function** trong `useEffect()`
 
-## Cấu hình
+:::
 
-| Config      | Type     | Description                                                                                                                                     |
-| ----------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `queryKey`  | Array    | Chỉ định những queries có `queryKey` tương đối khớp với `queryKey` ta chỉ định mới bị cancel                                                    |
-| `exact`     | Boolean  | `true`: chỉ cancel những queries có `queryKey` khớp chính xác tuyệt đối với `queryKey` ta chỉ định                                              |
-| `predicate` | Function | Là một hàm `return Boolean `chỉ định những queries nào thỏa mãn điều kiện mới được cancel. Dùng hàm này rồi thì thôi không dùng `queryKey` nữa. |
+## Cú pháp
 
-- Ví dụ:
+```ts
+queryClient.cancelQueries(filter?: QueryFilter): Promise<void>
+```
+
+- Xem chi tiết QueryFilter [tại đây](../query-filter)
+
+## Ví dụ
 
 ```tsx
 import { useQuery, useQueryClient } from "@tanstack/react-query";

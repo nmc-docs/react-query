@@ -38,11 +38,12 @@ const myInfiniteQuery = useInfiniteQuery({
 
 Vì `useInfiniteQuery()` là một hook được mở rộng từ `useQuery()` nên nó sẽ có cấu hình tương tự như `useQuery()` . Nhưng có một số khác biệt sau:
 
-| Config                 | Value    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ---------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `queryFn`              | Function | Nhận một function**return Promise**: `queryFn: ({ pageParam = 1 }) => {…}`<br />Ngoài các parameter detsructuring như `queryKey`, `signal` như ở `queryFn` trong `useQuery()`, còn có thêm `pageParams` là số thứ tự của page (bộ) để fetch                                                                                                                                                                                                           |
-| `getNextPageParam`     | Function | `getNextPageParam: (lastPage, allPages) => {}`<br />- `lastPage`: là bộ cuối cùng đã được fetch, là một mảng chứa dữ liệu.<br />- `allPages`: là một mảng chứa tất cả các bộ đã fetch được.<br />Là một hàm return về một `number` là số thứ tự page (bộ) tiếp theo cần fetch theo thứ tự xuôi. <br />Nếu trả về `undefined`, sẽ không fetch thêm bộ nào nữa, và lúc đó thuộc tính `hasNextPage` sẽ trả về `false`                                    |
-| `getPreviousPageParam` | Function | `getPreviousPageParam: (firstPage, allPages) => {}`<br />- `firstPage`: là bộ cuối cùng đã được fetch theo chiều ngược lại, là một mảng chứa dữ liệu.<br />- `allPages`: là một mảng chứa tất cả các bộ đã fetch được.<br />Là một hàm return về một `number` là số thứ tự page (bộ) tiếp theo cần fetch theo thứ tự ngược lại.<br />Nếu trả về `undefined`, sẽ không fetch thêm bộ nào nữa, và lúc đó thuộc tính `hasPreviousPage` sẽ trả về `false` |
+| Config                 | Value    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `queryFn`              | Function | ➡️Nhận một function**return Promise**: `queryFn: ({ pageParam }) => {…}`<br />➡️Ngoài các parameter detsructuring như `queryKey`, `signal` như ở `queryFn` trong `useQuery()`, còn có thêm `pageParams` là số thứ tự của page (bộ) để fetch                                                                                                                                                                                                                                                                                                                                                             |
+| `initialPageParam`     | Number   | Thường là 1 (là giá trị khởi tạo của `pageParam` trong `queryFn` trên)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `getNextPageParam`     | Function | ➡️`getNextPageParam: (lastPage, allPages, lastPageParam) => {}`<br />✏️ `lastPage`: là bộ cuối cùng đã được fetch, là một mảng chứa các phần tử là object dữ liệu.<br />✏️ `allPages`: là một mảng chứa tất cả các bộ đã fetch được.<br />✏️`lastPageParam`: là một number là số thứ tự page (bộ) cuối cùng đã fetch được<br />➡️Là một hàm return về một `number` là số thứ tự page (bộ) tiếp theo cần fetch theo thứ tự xuôi. <br />➡️Nếu trả về `undefined`, sẽ không fetch thêm bộ nào nữa, và lúc đó thuộc tính `hasNextPage` sẽ trả về `false`                                                    |
+| `getPreviousPageParam` | Function | ➡️`getPreviousPageParam: (firstPage, allPages, firstPageParam) => {}`<br />✏️ `firstPage`: là bộ cuối cùng đã được fetch theo chiều ngược lại, là một mảng chứa các phần tử là object dữ liệu.<br />✏️ `allPages`: là một mảng chứa tất cả các bộ đã fetch được.<br />✏️`firstPageParam`: là một number là số page (bộ) cuối cùng đã fetch được theo chiều ngược lại<br />➡️Là một hàm return về một `number` là số thứ tự page (bộ) tiếp theo cần fetch theo thứ tự ngược lại.<br />➡️Nếu trả về `undefined`, sẽ không fetch thêm bộ nào nữa, và lúc đó thuộc tính `hasPreviousPage` sẽ trả về `false` |
 
 ## Ví dụ:
 
@@ -65,25 +66,30 @@ const httpGetByPage = async (page: number) => {
 };
 
 export default function App() {
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["tasks"],
-    queryFn: ({ pageParam = 1 }) => httpGetByPage(pageParam),
-    getNextPageParam: (lastPage, allPages) => {
-      //Nếu bộ cuối cùng đã được fetch không có item thì trả về undefined, dừng việc fetch bộ tiếp theo
-      return lastPage.length > 0 ? allPages.length + 1 : undefined;
-    },
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["tasks"],
+      queryFn: ({ pageParam }) => httpGetByPage(pageParam),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => {
+        //Nếu bộ cuối cùng đã được fetch không có item thì trả về undefined, dừng việc fetch bộ tiếp theo
+        return lastPage.length > 0 ? allPages.length + 1 : undefined;
+      },
+    });
 
   return (
     <div>
       {data?.pages.map((page) => (
-        <React.Fragment>
+        <>
           {page.map((task, index) => (
             <p key={index}>{task.name}</p>
           ))}
-        </React.Fragment>
+        </>
       ))}
-      <button onClick={() => fetchNextPage()} disabled={!hasNextPage}>
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetchingNextPage}
+      >
         Load more
       </button>
     </div>

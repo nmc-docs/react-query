@@ -52,18 +52,19 @@ const {
 - Sau đây là ví dụ về phân trang (thường áp dụng đối với render dữ liệu dưới dạng bảng):
 
 ```tsx
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+
 function Todos() {
   const [page, setPage] = React.useState(0);
 
   const fetchProjects = (page = 0) =>
     fetch("/api/projects?page=" + page).then((res) => res.json());
 
-  const { isLoading, isError, error, data, isFetching, isPreviousData } =
-    useQuery({
-      queryKey: ["projects", page],
-      queryFn: () => fetchProjects(page),
-      keepPreviousData: true,
-    });
+  const { isLoading, isError, error, data, isFetching } = useQuery({
+    queryKey: ["projects", page],
+    queryFn: () => fetchProjects(page),
+    placeholderData: keepPreviousData,
+  });
 
   return (
     <div>
@@ -87,12 +88,12 @@ function Todos() {
       </button>{" "}
       <button
         onClick={() => {
-          if (!isPreviousData && data.hasMore) {
+          if (data.hasMore) {
             setPage((old) => old + 1);
           }
         }}
         // Disable the Next Page button until we know a next page is available
-        disabled={isPreviousData || !data?.hasMore}
+        disabled={!data?.hasMore}
       >
         Next Page
       </button>
@@ -104,7 +105,7 @@ function Todos() {
 
 :::tip
 
-- Trong ví dụ trên, ta sử dụng `keepPreviousData: true` ở cấu hình của useQuery() để:
+- Trong ví dụ trên, ta sử dụng `placeholderData: keepPreviousData` ở cấu hình của useQuery() để:
   - Dữ liệu từ query trước vẫn sẽ được giữ cho đến khi data của query mới được fetch thành công, tránh tình trạng UI khi hiển thị bị nhảy
   - Khi data của query mới được fetch thành công, nó sẽ được ghi đè lên data của query trước đó
 

@@ -16,19 +16,24 @@ slug: /
 npm install @tanstack/react-query
 ```
 
-- Bọc component `<QueryClientProvider/>` lên trên cùng của app:
+- Tạo component `<TanstackQueryProvider />` xong bọc component này ở App.tsx:
 
 ```tsx
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import React, { PropsWithChildren } from "react";
 
-const queryClient = new QueryClient();
+const TanstackQueryProvider = ({ children }: PropsWithChildren) => {
+  const [queryClient] = React.useState(() => new QueryClient());
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+};
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
-);
+export default TanstackQueryProvider;
 ```
 
 ## Vòng đời của một query trong react query
