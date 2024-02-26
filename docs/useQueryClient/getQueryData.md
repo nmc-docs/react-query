@@ -13,10 +13,12 @@ sidebar_position: 4
 ## Cú pháp
 
 ```ts
-queryClient.getQueryData(queryKey: QueryKey): unkown
+queryClient.getQueryData<T>(queryKey: QueryKey): unkown
 ```
 
-- Trong đó: **queryKey** là mảng query key cần lấy dữ liệu trong cache
+- Trong đó:
+  - **queryKey**: là mảng query key cần lấy dữ liệu trong cache
+  - **T**: là kiểu dữ liệu của data
 
 ## Ví dụ
 
