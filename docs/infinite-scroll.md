@@ -55,13 +55,21 @@ interface Task {
   name: string;
 }
 
+interface TaskResponse {
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  pageSize: number;
+  data: Task[];
+}
+
 const http = axios.create({
   baseURL: "https://6404cc9280d9c5c7bad0e2f2.mockapi.io/api/v1/",
 });
 
 const httpGetByPage = async (page: number) => {
   //Giới hạn mỗi bộ chứa 5 item cần render
-  const { data } = await http.get<Task[]>(`tasks?page=${page}&limit=5`);
+  const { data } = await http.get<TaskResponse>(`tasks?page=${page}&limit=5`);
   return data;
 };
 
@@ -72,8 +80,11 @@ export default function App() {
       queryFn: ({ pageParam }) => httpGetByPage(pageParam),
       initialPageParam: 1,
       getNextPageParam: (lastPage, allPages) => {
-        //Nếu bộ cuối cùng đã được fetch không có item thì trả về undefined, dừng việc fetch bộ tiếp theo
-        return lastPage.length > 0 ? allPages.length + 1 : undefined;
+        /* 
+          lastPage: TaskResponse
+          allPages: TaskResponse[]
+        */
+        return lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined;
       },
     });
 
@@ -81,7 +92,7 @@ export default function App() {
     <div>
       {data?.pages.map((page) => (
         <>
-          {page.map((task, index) => (
+          {page.data.map((task, index) => (
             <p key={index}>{task.name}</p>
           ))}
         </>
